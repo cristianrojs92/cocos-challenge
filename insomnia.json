@@ -1,0 +1,478 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-13T00:00:00.000Z",
+  "__export_source": "cocos-challenge",
+  "resources": [
+    {
+      "_id": "wrk_cocos_challenge",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "Cocos challenge API",
+      "scope": "collection",
+      "description": "Ejemplos de la API del challenge de backend de Cocos. Los valores en las descripciones corresponden al seed de database.sql (cada request modifica el estado: para volver al seed, `docker compose down -v && docker compose up`)."
+    },
+    {
+      "_id": "env_cocos_base",
+      "_type": "environment",
+      "parentId": "wrk_cocos_challenge",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url"
+        ]
+      }
+    },
+    {
+      "_id": "fld_portfolio",
+      "_type": "request_group",
+      "parentId": "wrk_cocos_challenge",
+      "name": "Portfolio",
+      "metaSortKey": 0
+    },
+    {
+      "_id": "fld_instruments",
+      "_type": "request_group",
+      "parentId": "wrk_cocos_challenge",
+      "name": "Búsqueda de activos",
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_orders",
+      "_type": "request_group",
+      "parentId": "wrk_cocos_challenge",
+      "name": "Órdenes",
+      "metaSortKey": 2
+    },
+    {
+      "_id": "fld_errors",
+      "_type": "request_group",
+      "parentId": "wrk_cocos_challenge",
+      "name": "Errores",
+      "metaSortKey": 3
+    },
+    {
+      "_id": "req_01_portfolio",
+      "_type": "request",
+      "parentId": "fld_portfolio",
+      "name": "Portfolio usuario 1",
+      "description": "totalValue 904784 · cashBalance 753000 · reservedCash 125500 · availableCash 627500. Posiciones: METR (500) y PAMP (40).",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/1/portfolio",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 1,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_02_portfolio",
+      "_type": "request",
+      "parentId": "fld_portfolio",
+      "name": "Portfolio usuario sin órdenes",
+      "description": "Todo en 0 y positions [].",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/2/portfolio",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 2,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_03_instruments",
+      "_type": "request",
+      "parentId": "fld_instruments",
+      "name": "Buscar por ticker",
+      "description": "Parcial y sin distinguir mayúsculas. Devuelve { items, total, limit, offset }; PAMP con lastPrice 925.85.",
+      "method": "GET",
+      "url": "{{ _.base_url }}/instruments/search?q=pamp",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 3,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_04_instruments",
+      "_type": "request",
+      "parentId": "fld_instruments",
+      "name": "Buscar por nombre",
+      "description": "Incluye PAMP (Pampa Holding) y HAVA (Havanna Holding).",
+      "method": "GET",
+      "url": "{{ _.base_url }}/instruments/search?q=holding",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 4,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_04b_instruments",
+      "_type": "request",
+      "parentId": "fld_instruments",
+      "name": "Buscar paginado (segunda página)",
+      "description": "limit (1 a 50, por defecto 20) y offset (por defecto 0). Con q=a hay 59 resultados: esta página trae del 21 al 40.",
+      "method": "GET",
+      "url": "{{ _.base_url }}/instruments/search?q=a&limit=20&offset=20",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 4.5,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_05_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "MARKET BUY por cantidad",
+      "description": "FILLED al último close (925.85).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 5,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_06_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "MARKET BUY por monto (ARS)",
+      "description": "size = floor(10000 / 925.85) = 10.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"amount\": 10000\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 6,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_07_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "LIMIT BUY",
+      "description": "NEW: reserva 5 × 900 del disponible.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 5,\n  \"price\": 900\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 7,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_08_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "MARKET SELL",
+      "description": "FILLED si alcanzan las acciones (PAMP: 40 en cartera).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 8,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_09_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "LIMIT SELL",
+      "description": "NEW: reserva 30 acciones de PAMP.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"SELL\",\n  \"type\": \"LIMIT\",\n  \"size\": 30,\n  \"price\": 1000\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 9,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_10_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "Rechazo por fondos insuficientes",
+      "description": "1000 × 925.85 > disponible → 201 con status REJECTED y rejectReason INSUFFICIENT_FUNDS (queda persistida).",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1000\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 10,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_11_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "Cancelar orden NEW (id 5)",
+      "description": "CANCELLED, libera 35500 de la reserva. Repetirla devuelve 409.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders/5/cancel",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 11,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_12_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "400 LIMIT sin precio",
+      "description": "Pedido mal formado: no se persiste.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 12,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_13_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "400 operar pesos (ARS)",
+      "description": "El instrumento MONEDA no se compra ni se vende.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 66,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 13,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_14_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "409 cancelar orden FILLED",
+      "description": "Solo se cancelan órdenes NEW.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders/1/cancel",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 14,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_15_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "404 usuario inexistente",
+      "description": "",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/9999/portfolio",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 15,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_16_orders",
+      "_type": "request",
+      "parentId": "fld_orders",
+      "name": "MARKET BUY con Idempotency-Key",
+      "description": "Enviarla dos veces: la segunda devuelve la misma orden (mismo id) con el header Idempotent-Replayed: true, sin crear otra. Para una orden nueva, cambiar la clave.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "7d3f0c2e-1b8a-4c55-9e0f-2a6b8c9d1e3f"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 10.5,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_17_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "409 Idempotency-Key reusada con otro pedido",
+      "description": "Usa la misma clave que 'MARKET BUY con Idempotency-Key' pero con otro pedido (SELL). Enviar primero esa orden.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "7d3f0c2e-1b8a-4c55-9e0f-2a6b8c9d1e3f"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 15.5,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_18_errors",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "400 Idempotency-Key con formato inválido",
+      "description": "La clave debe tener entre 1 y 64 caracteres de A-Z, a-z, 0-9, '_' o '-'. Con espacios o '!' devuelve 400 y no persiste nada.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/orders",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"userId\": 1,\n  \"instrumentId\": 47,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Idempotency-Key",
+          "value": "clave con espacios!"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 15.6,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    },
+    {
+      "_id": "req_err_search_limit",
+      "_type": "request",
+      "parentId": "fld_errors",
+      "name": "400 limit fuera de rango",
+      "description": "limit debe ser un entero entre 1 y 50.",
+      "method": "GET",
+      "url": "{{ _.base_url }}/instruments/search?q=a&limit=100",
+      "body": {},
+      "headers": [],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 15.7,
+      "created": 1794528000000,
+      "modified": 1794528000000
+    }
+  ]
+}

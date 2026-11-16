@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cocos
+      POSTGRES_PASSWORD: cocos
+      POSTGRES_DB: cocos
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+      - ./docker/02-create-test-db.sql:/docker-entrypoint-initdb.d/02-create-test-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cocos -d cocos']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  api:
+    build: .
+    # tini como PID 1: reenvía las señales a Node y recoge procesos huérfanos.
+    init: true
+    environment:
+      DATABASE_URL: postgres://cocos:cocos@db:5432/cocos
+      PORT: 3000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - '${API_PORT:-3000}:3000'
+    depends_on:
+      db:
+        condition: service_healthy

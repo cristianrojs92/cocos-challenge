@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.env
+.superpowers
+docs
+*.log
+.DS_Store
+*.tsbuildinfo
+CLAUDE.md
